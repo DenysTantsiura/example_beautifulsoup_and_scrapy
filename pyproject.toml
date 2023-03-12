@@ -8,6 +8,10 @@ packages = [{include = "example_beautifulsoup_and_scrapy"}]
 
 [tool.poetry.dependencies]
 python = "^3.10"
+lxml = "^4.9.2"
+requests = "^2.28.2"
+beautifulsoup4 = "^4.11.2"
+scrapy = "^2.8.0"
 
 
 [tool.poetry.group.dev.dependencies]
