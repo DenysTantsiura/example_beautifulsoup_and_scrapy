@@ -93,15 +93,16 @@ def author_about(href):
 
 @duration
 def main():
-    # print(default_timer())
-    url = 'https://quotes.toscrape.com'
+    url = 'https://quotes.toscrape.com/'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
 
-    quotes = soup.find_all('span', class_='text')
-    fullnames = soup.find_all('small', class_='author')
-    abouts = soup.find_all(href=author_about)  # ('a', href=True)
-    tags = soup.find_all('div', class_='tags')
+    quotes = [quote.text for quote in soup.find_all('span', class_='text')]
+    fullnames = [name.text for name in soup.find_all('small', class_='author')]
+    # generate list of right links to author's about:
+    abouts = [url.replace('https:','http:')+about['href'][1:]+'/' 
+              for about in soup.find_all(href=author_about)]   # ('a', href=True)
+    tags = [tag.test for tag in soup.find_all('div', class_='tags')]
 
     # for i in range(0, len(quotes)):
     #     print(quotes[i].text)
@@ -111,10 +112,10 @@ def main():
     #         print(tagforquote.text)
     #     break
 
+    # grab author's about data to lists
     born_date = []
     born_location = []
     description = []
-    pprint(abouts:=[url+about['href'] for about in abouts])
 
     for about in abouts:
         response_about = requests.get(about)
@@ -122,6 +123,8 @@ def main():
         born_date.append(soup_about.find('span', class_='author-born-date').text)
         born_location.append(soup_about.find('span', class_='author-born-location').text)
         description.append(soup_about.find('div', class_='author-description').text)
+
+    
 
 
 if __name__ == "__main__":
