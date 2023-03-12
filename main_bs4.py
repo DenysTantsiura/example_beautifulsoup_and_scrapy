@@ -69,6 +69,7 @@ qoutes.json
 Попередня домашня робота повинна коректно працювати з новою отриманою базою даних.
 """
 from collections import Counter
+import json
 import logging
 from pprint import pprint
 import re
@@ -97,7 +98,8 @@ def author_about(href):
 
 
 def save_to_json(file: str, json_data: list) -> None:
-    ...
+    with open(file, "w", encoding="utf-8") as fh:  # try-except!
+        json.dump(json_data, fh)
 
 
 @duration
