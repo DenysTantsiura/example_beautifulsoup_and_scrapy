@@ -64,7 +64,11 @@ qoutes.json
     "quote": "“A day without sunshine is like, you know, night.”"
   }
 ]
+
+завантаження json файлів у хмарну базу даних для отриманих файлів. 
+Попередня домашня робота повинна коректно працювати з новою отриманою базою даних.
 """
+from collections import Counter
 import logging
 from pprint import pprint
 import re
@@ -88,11 +92,16 @@ def duration(fun):
 
 
 def author_about(href):
+    """Filter for specific(re) seach."""
     return href and re.compile("/author/").search(href)
 
 
+def save_to_json(file: str, json_data: list) -> None:
+    ...
+
+
 @duration
-def main():
+def main() -> None:
     url = 'https://quotes.toscrape.com/'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'lxml')
@@ -102,15 +111,8 @@ def main():
     # generate list of right links to author's about:
     abouts = [url.replace('https:','http:')+about['href'][1:]+'/' 
               for about in soup.find_all(href=author_about)]   # ('a', href=True)
-    tags = [tag.test for tag in soup.find_all('div', class_='tags')]
-
-    # for i in range(0, len(quotes)):
-    #     print(quotes[i].text)
-    #     print('--' + authors[i].text)
-    #     tagsforquote = tags[i].find_all('a', class_='tag')
-    #     for tagforquote in tagsforquote:
-    #         print(tagforquote.text)
-    #     break
+    tags = [tag.find_all('a', class_='tag') for tag in soup.find_all('div', class_='tags')]
+    tags = [[el.text for el in tag] for tag in tags]
 
     # grab author's about data to lists
     born_date = []
@@ -124,7 +126,31 @@ def main():
         born_location.append(soup_about.find('span', class_='author-born-location').text)
         description.append(soup_about.find('div', class_='author-description').text)
 
+    quotes_in_json = [{'tags':tags[el],
+                       'author':fullnames[el],
+                       'quote':quotes[el],
+                       } 
+                       for el in range(len(quotes))]
     
+    # remove duplicates:
+    fix_dublicates = dict(Counter(description))
+    for item in description:
+        if fix_dublicates.get(item, None) > 1:
+            number = description.index(item)
+            del description[number]  # description.pop(number)
+            del fullnames[number]
+            del born_date[number]
+            del born_location[number]
+            fix_dublicates[item] -= 1
+
+    authors_in_json = [{'fullname':fullnames[el],
+                        'born_date':born_date[el],
+                        'born_location':born_location[el],
+                        'description':description[el],
+                        } 
+                       for el in range(len(fullnames))]  
+    save_to_json('authors.json', authors_in_json)
+    save_to_json('qoutes.json', quotes_in_json)
 
 
 if __name__ == "__main__":
