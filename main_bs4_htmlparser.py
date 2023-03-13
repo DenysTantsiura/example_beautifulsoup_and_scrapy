@@ -60,12 +60,12 @@ def get_soup_from_url(url: str, parser: str = 'lxml') -> Optional[BeautifulSoup]
     response = requests.get(url)  # response.text: str;  response.content: bytes 
     if response.status_code == 200:
         return BeautifulSoup(response.text, parser) if parser == 'lxml' else BeautifulSoup(response.content, parser)
-    
+
 
 def gather_information(url: str) -> tuple[list]:
     """Gather information from one page by URL.
     Return content for two json-files."""
-    if not (soup:= get_soup_from_url(url)):  # (url, 'html.parser')
+    if not (soup:= get_soup_from_url(url, 'html.parser')):  # (url)
         return ([], [])
     
     quotes = [quote.text for quote in soup.find_all('span', class_='text')]  # .find_all('span', attrs={'class': 'text'})
@@ -82,7 +82,7 @@ def gather_information(url: str) -> tuple[list]:
     description = []
 
     for about in abouts:
-        if not (soup_about:= get_soup_from_url(about)):  # (about, 'html.parser')
+        if not (soup_about:= get_soup_from_url(about, 'html.parser')):  # (about)
             continue
 
         born_date.append(soup_about.find('span', class_='author-born-date').text)
