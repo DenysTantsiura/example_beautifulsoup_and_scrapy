@@ -19,13 +19,13 @@ from database.seed import upload_authors_to_the_database, upload_quotes_to_the_d
 
 
 def create_mongodb() -> None:
-    """Створення хмарної бази даних Atlas MongoDB (quoters_book)."""
+    """Creating a cloud database Atlas MongoDB (quoters_book)."""
     mongodb_password = get_password()
     #  full driver connection from Database Deployments:
     client = pymongo.MongoClient(
         f'mongodb+srv://tdv:{mongodb_password}@cluster0.7ylfcax.mongodb.net/?retryWrites=true&w=majority',
         server_api=ServerApi('1'))
-    client.quoters_book  # звертаємось до неіснуючої БД quoters_book і вона автоматично створюється
+    client.quoters_book  # we refer to a non-existent database quoters_book and it is automatically created
 
 
 def duration(fun):
@@ -140,10 +140,10 @@ if __name__ == '__main__':
     # Scrapping
     main()
 
-    # Створіть хмарну базу даних Atlas MongoDB...
+    # Creating a cloud database Atlas MongoDB...
     create_mongodb()
 
-    # Наповнення БД - завантаження json файлів у хмарну базу даних:
+    # Filling the database - uploading json files to the cloud database:
     if not Quote.objects():
         upload_authors_to_the_database('jsons_files/authors.json')
         upload_quotes_to_the_database('jsons_files/quotes.json')

@@ -1,4 +1,4 @@
-"""скрапінг сайту http://quotes.toscrape.com."""
+"""site scraping http://quotes.toscrape.com."""
 # from collections import Counter
 import json
 import logging
@@ -29,13 +29,13 @@ def author_about(href):
 
 
 def create_mongodb() -> None:
-    """Створення хмарної бази даних Atlas MongoDB (quoters_book)."""
+    """Creating a cloud database Atlas MongoDB (quoters_book)."""
     mongodb_password = get_password()
     #  full driver connection from Database Deployments:
     client = pymongo.MongoClient(
         f'mongodb+srv://tdv:{mongodb_password}@cluster0.7ylfcax.mongodb.net/?retryWrites=true&w=majority',
         server_api=ServerApi('1'))
-    client.quoters_book  # звертаємось до неіснуючої БД quoters_book і вона автоматично створюється
+    client.quoters_book  # we refer to a non-existent database quoters_book and it is automatically created
 
 
 def duplicate_remover(original_list: list[dict], new_list: list[dict]) -> list[dict]:
@@ -105,7 +105,7 @@ def gather_information(url: str) -> tuple[list, list]:
     return quotes_in_json, authors_in_json
 
 
-# перетворимо відповідь від сервера у формат lxml
+# let's convert the response from the server into lxml format
 def get_soup_from_url(url: str, parser: str = 'lxml') -> Optional[BeautifulSoup]:
     """Return instance of BeautifulSoup class."""
     response = requests.get(url)  # response.text: str;  response.content: bytes 
@@ -148,10 +148,10 @@ if __name__ == '__main__':
     # Scrapping
     main()
 
-    # Створіть хмарну базу даних Atlas MongoDB...
+    # Creating a cloud database Atlas MongoDB...
     create_mongodb()
 
-    # Наповнення БД - завантаження json файлів у хмарну базу даних:
+    # Filling the database - uploading json files to the cloud database:
     if not Quote.objects():
         upload_authors_to_the_database('jsons_files/authors.json')
         upload_quotes_to_the_database('jsons_files/quotes.json')
