@@ -44,5 +44,5 @@ def upload_quotes_to_the_database(file: str) -> None:
 if __name__ == '__main__':
     # для завантаження json файлів у хмарну базу даних:
     if not Quote.objects():
-        upload_authors_to_the_database()
-        upload_quotes_to_the_database()
+        upload_authors_to_the_database('../jsons_files/authors.json')
+        upload_quotes_to_the_database('../jsons_files/quotes.json')
