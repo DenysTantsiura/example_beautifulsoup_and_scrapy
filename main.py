@@ -14,7 +14,7 @@ from scrapy.crawler import CrawlerProcess
 
 # export PYTHONPATH="${PYTHONPATH}:/1prj/example_beautifulsoup_and_scrapy/"
 from authentication import get_password
-from database.models import Quote
+from database.models import Quote  # Author,
 from database.seed import upload_authors_to_the_database, upload_quotes_to_the_database
 
 
@@ -60,7 +60,7 @@ class GetAuthorsSpider(scrapy.Spider):
 
     def parse(self, response):  # async?
         # https://docs.scrapy.org/en/latest/topics/selectors.html
-        links_to_about_author = response.xpath('//a[contains(@href, "author")]/@href').getall()  # a(href)
+        links_to_about_author = response.xpath('//a[contains(@href, "/author/")]/@href').getall()  # a(href)
         # ! 1 by 1: /following-sibling::a
         # links_to_about_author=response.xpath('//div[@class="quote"]/span/small[@class="author"]/following-sibling::a')
         # print(f'\n{links_to_about_author=}\n')
@@ -77,7 +77,7 @@ class GetAuthorsSpider(scrapy.Spider):
     # static?
     def parse_author(self, response):  # async?
         fullname = response.xpath(
-            "/html//div[@class='author-details']/h3[@class='author-title']/text()").get().strip()
+            "/html//div[@class='author-details']/h3[@class='author-title']/text()").get().strip().replace('-', ' ')  # p6 Alexandre Dumas-fils
         born_date = response.xpath(
             "/html//div[@class='author-details']/p/span[@class='author-born-date']/text()").get().strip()
         born_location = response.xpath(
@@ -131,8 +131,8 @@ class GetQuotesSpider(scrapy.Spider):
 def main() -> None:
     # Scrapping
     process = CrawlerProcess()
-    process.crawl(GetAuthorsSpider)
     process.crawl(GetQuotesSpider)
+    process.crawl(GetAuthorsSpider)
     process.start()  # the script will block here until the crawling is finished
 
 

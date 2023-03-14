@@ -28,9 +28,9 @@ def upload_authors_to_the_database(file: str) -> None:
 def upload_quotes_to_the_database(file: str) -> None:
     """Upload quotes from json-file to database."""
     quotes = read_json_file(file)
-    for quote in quotes:
+    for quote in quotes: 
         author = Author.objects(fullname=quote['author']).first()
-        if author.id:
+        if author and author.id:  #
             Quote(
                 tags=quote['tags'],
                 author=author.id,
@@ -38,7 +38,7 @@ def upload_quotes_to_the_database(file: str) -> None:
                 ).save()
 
         else:
-            print(f'Author "{quote["author"]}" is unknown!')
+            print(f'\nAuthor "{quote["author"]}" is unknown!\n')
 
 
 if __name__ == '__main__':

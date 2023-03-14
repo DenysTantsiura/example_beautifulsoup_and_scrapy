@@ -41,7 +41,7 @@ def get_password(key_file: str = key_file) -> str:
 
     else:
         print(f'Can`t find {pathlib.Path(key_file)}')
-        key: str = input(f'Enter the KEY ({key_file}):\n')
+        key: str = input(f'Enter the KEY ({key_file} contain right password for config.ini):\n')
         save_key(key, key_file) if key else None
     
     return key
