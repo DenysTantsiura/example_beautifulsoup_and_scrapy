@@ -58,7 +58,7 @@ class GetAuthorsSpider(scrapy.Spider):
     allowed_domains = ["quotes.toscrape.com"]
     start_urls = ["http://quotes.toscrape.com/"]
 
-    def parse(self, response):  # async?
+    def parse(self, response, *_):  # async?
         # https://docs.scrapy.org/en/latest/topics/selectors.html
         links_to_about_author = response.xpath('//a[contains(@href, "/author/")]/@href').getall()  # a(href)
         # ! 1 by 1: /following-sibling::a
@@ -75,9 +75,9 @@ class GetAuthorsSpider(scrapy.Spider):
             yield scrapy.Request(self.start_urls[0][:-1]+next_link, callback=self.parse)
 
     # static?
-    def parse_author(self, response):  # async?
-        fullname = response.xpath(
-            "/html//div[@class='author-details']/h3[@class='author-title']/text()").get().strip().replace('-', ' ')  # p6 Alexandre Dumas-fils
+    def parse_author(self, response, *_):  # async?
+        fullname = response.xpath(  # .replace('-', ' ')  for p6 Alexandre Dumas-fils
+            "/html//div[@class='author-details']/h3[@class='author-title']/text()").get().strip().replace('-', ' ')
         born_date = response.xpath(
             "/html//div[@class='author-details']/p/span[@class='author-born-date']/text()").get().strip()
         born_location = response.xpath(
@@ -111,7 +111,7 @@ class GetQuotesSpider(scrapy.Spider):
     allowed_domains = ["quotes.toscrape.com"]
     start_urls = ["http://quotes.toscrape.com/"]
 
-    def parse(self, response):  # async?
+    def parse(self, response, *_):  # async?
         for quote in response.xpath("/html//div[@class='quote']"):  # .css(...)  ...=from .select
             yield {  # .get = new methods result in a more concise and readable code  .strip()
                 "quote": quote.xpath("span[@class='text']/text()").get().strip(),
